@@ -1,51 +1,70 @@
 <!DOCTYPE html>
-<html>
-  <head>
-      <meta charset="UTF-8">
-      <title>Title of the document</title>
-	  <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.1.2/handlebars.min.js"></script>
-  </head>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Students By Major</title>
 
-  <body>
-      <h2>Handlebars templates to populate a table with an array of objects using Ajax</h2>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.1.2/handlebars.min.js"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
 
-      <h3>array of people objects as a table</h3>
-          <div id="peopleTable"></div>
-  </body>
+	<script type="text/x-handlebars-template" id="tableTemplate">
+		<table class="table">
+			<thead>
+				<tr><th>Name</th><th>Major</th><th>Midterm</th><th>Final</th></tr>
+			</thead>
+			<tbody>
+				{{#each rows}}
+				  <tr>
+				  	<td>{{name}}</td><td>{{major}}</td><td>{{midterm}}</td><td>{{final}}</td>
+				  </tr>
+				{{/each}}
+			</tbody>
+		</table>
+	</script>
 
-<!-- The script element is used to define the Handlebars template -->
-<script type="text/x-handlebars-template" id="tableTemplate">
-   <table cellspacing='12'>
-       <tr><th>Name</th><th>State</th><th>Age</th><th>Flavor</th></tr>
-       {{#each rows}}
-            <tr>
-                <td>{{name}}</td><td>{{state}}</td><td>{{age}}</td><td>{{flavor}}</td>
-            </tr>
-      {{/each}}
-   </table>
-</script>
-  
-<script>
-    var request = new XMLHttpRequest();
-    var url = "hb6data.json";
-    request.open('GET', url);     // open the request
-	
-    request.onload = function() {                     // the data is back...
+	<script>
+		window.onload = () => {
+			function getData(selected_major) {
+				let request = new XMLHttpRequest();
+				request.open('GET', 'cit5students.json');
 
-        var data = JSON.parse(request.responseText);    // de-stringify JSON back to regular array of JavaScript objects
+				request.onload = () => {
+					let data = JSON.parse(request.responseText);
+					let studentMajors = data.filter((name) => {
+						return name.major == selected_major;
+					})
+					if request.status == 200 {
+						let templateText = document.getElementById('templateText').innerHTML;
+						let compiledTemplateText = Handlebars.compile(templateText);
+						let compiledHTML = compiledTemplateText({rows: studentMajors});
+						document.getElementById('majorTable').innerHTML = compiledHTML;
+					}
+					else {
+						document.querySelector('#majorTable').innerHTML = 'There was an error.';
+					}
+				}
+				request.send(null);
+			}
+			document.getElementById('CIT').addEventListener('click', getData('CIT'));
+			document.getElementById('BUS').addEventListener('click', getData('BUS'));
+		}
+	</script>
+</head>
+<body>
+	<div class="container">
+		<h1>Select a Major</h1>
 
-        if (request.status == 200) {
-              var templateText = document.getElementById('tableTemplate').innerHTML; // Get template text 
-              var compiledTemplateText = Handlebars.compile(templateText);    // Compile the Handlebars template
-              compiledHtml = compiledTemplateText({ rows: data })             // Evaluate the template
-			  document.getElementById('peopleTable').innerHTML = compiledHtml; 	// put html table into division
-        }
-        else {
-            document.querySelector('#peopleTable').innerHTML = "There was an error, or currency symbol not found";
-        }
-    }
+		<p>
+			<button type="button" id="CIT">CIT Majors</button>
+			<button type="button" id="BUS">Business Majors</button>
+		</p>
 
-    request.send(null);
-  
-</script>
+		<h2>Filtered Dataset by Major</h2>
+
+		<div id="majorTable"></div>
+	</div>
+</body>
 </html>
