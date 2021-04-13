@@ -22,17 +22,14 @@
 	</script>
 
 	<script>
-		window.onload = function() {
+		window.addEventListener('load', () => {
 			function getData(selected_major) {
 				let request = new XMLHttpRequest();
 				request.open('GET', 'cit5students.json');
 
 				request.onload = function() {
 					let data = JSON.parse(request.responseText);
-					function getMajor(student) {
-						return student.major == selected_major;
-					}
-					let studentMajors = data.filter(getMajor);
+					let studentMajors = data.filter(student => student.major == selected_major);
 					if (request.status == 200) {
 						let templateText = document.getElementById('templateText').innerHTML;
 						let compiledTemplateText = Handlebars.compile(templateText);
@@ -42,12 +39,10 @@
 					else {
 						document.querySelector('#majorTable').innerHTML = 'There was an error.';
 					}
-				};
+				}
 				request.send(null);
 			}
-			document.getElementById('CIT').addEventListener('click', getData('CIT'));
-			document.getElementById('BUS').addEventListener('click', getData('BUS'));
-		};
+		}
 	</script>
 </head>
 <body>
@@ -55,8 +50,8 @@
 		<h1>Select a Major</h1>
 
 		<p>
-			<button type="button" id="CIT">CIT Majors</button>
-			<button type="button" id="BUS">Business Majors</button>
+			<button type="button" onClick="getData('CIT')">CIT Majors</button>
+			<button type="button" onClick="getData('BUS')">Business Majors</button>
 		</p>
 
 		<h2>Filtered Dataset by Major</h2>
