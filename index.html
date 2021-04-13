@@ -29,7 +29,10 @@
 
 				request.onload = function() {
 					let data = JSON.parse(request.responseText);
-					let studentMajors = data.filter(student => student.major == selected_major);
+					function getMajor(student) {
+						return student.major == selected_major;
+					}
+					let studentMajors = data.filter(getMajor);
 					if (request.status == 200) {
 						let templateText = document.getElementById('templateText').innerHTML;
 						let compiledTemplateText = Handlebars.compile(templateText);
