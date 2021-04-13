@@ -35,8 +35,8 @@
 					let data = JSON.parse(request.responseText);
 					let studentMajors = data.filter((name) => {
 						return name.major == selected_major;
-					})
-					if request.status == 200 {
+					});
+					if (request.status == 200) {
 						let templateText = document.getElementById('templateText').innerHTML;
 						let compiledTemplateText = Handlebars.compile(templateText);
 						let compiledHTML = compiledTemplateText({rows: studentMajors});
