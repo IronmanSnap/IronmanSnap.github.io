@@ -48,7 +48,7 @@
 				}
 
 				if (request.status == 200) {
-					let templateText = document.getElementById('tableTemplate');
+					let templateText = document.getElementById('tableTemplate').innerHTML;
 					let compiledTemplateText = Handlebars.compile(templateText);
 					let compiledHTML = compiledTemplateText({ rows: student_majors });
 					document.getElementById('majorTable').innerHTML = compiledHTML;
