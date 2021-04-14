@@ -9,41 +9,6 @@
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
-
-	<script type="text/x-handlebars-template" id="tableTemplate">
-		<table class="table">
-				<tr><th>Name</th><th>Major</th><th>Midterm</th><th>Final</th></tr>
-				{{#each rows}}
-				  <tr>
-				  	<td>{{name}}</td><td>{{major}}</td><td>{{midterm}}</td><td>{{final}}</td>
-				  </tr>
-				{{/each}}
-		</table>
-	</script>
-
-	<script>
-			function getData(selected_major) {
-				let request = new XMLHttpRequest();
-				request.open('GET', 'cit5students.json');
-
-				request.onload = function() {
-					let data = JSON.parse(request.responseText);
-					let studentMajors = data.filter(function(student){
-						return student.major == selected_major;
-					});
-					if (request.status == 200) {
-						let templateText = document.getElementById('templateText').innerHTML;
-						let compiledTemplateText = Handlebars.compile(templateText);
-						let compiledHTML = compiledTemplateText({ rows: studentMajors });
-						document.getElementById('majorTable').innerHTML = compiledHTML;
-					}
-					else {
-						document.querySelector('#majorTable').innerHTML = 'There was an error.';
-					}
-				}
-				request.send(null);
-			}
-	</script>
 </head>
 <body>
 	<div class="container">
@@ -59,4 +24,39 @@
 		<div id="majorTable"></div>
 	</div>
 </body>
+	<script type="text/x-handlebars-template" id="tableTemplate">
+		<table class="table">
+				<tr><th>Name</th><th>Major</th><th>Midterm</th><th>Final</th></tr>
+				{{#each rows}}
+				  <tr>
+				  	<td>{{name}}</td><td>{{major}}</td><td>{{midterm}}</td><td>{{final}}</td>
+				  </tr>
+				{{/each}}
+		</table>
+	</script>
+
+	<script>
+		function getData(selected_major) {
+			let request = new XMLHttpRequest();
+			let url = 'cit5students.json';
+			request.open('GET', url);
+
+			request.onload = function() {
+				let data = JSON.parse(request.responseText);
+				let student_majors = data.filter(function(student){
+					return student.major == selected_major;
+				})
+
+				if (request.status == 200) {
+					let templateText = document.getElementById('tableTemplate');
+					let compiledTemplateText = Handlebars.compile(templateText);
+					let compiledHTML = compiledTemplateText({ rows: student_majors });
+					document.getElementById('majorTable').innerHTML = compiledHTML;
+				} else {
+					document.querySelector('#majorTable').innerHTML = 'An error occurred.';
+				}
+			}
+			request.send(null);
+		}
+	</script>
 </html>
